@@ -1,6 +1,6 @@
-# AI Quiz Loader 🎓🤖
+# QuizApp 🎓🤖
 
-AI Quiz Loader to prosta, wieloplatformowa aplikacja zbudowana w technologii **.NET MAUI** (działająca natywnie na Windows, a także gotowa na iOS i Androida). Została stworzona w celu ułatwienia i przyspieszenia procesu nauki za pomocą testów oraz quizów generowanych przez sztuczną inteligencję (np. ChatGPT, Gemini, Claude).
+QuizApp to prosta, wieloplatformowa aplikacja zbudowana w technologii **.NET MAUI** (działająca natywnie na Windows, a także gotowa na iOS i Androida). Została stworzona w celu ułatwienia i przyspieszenia procesu nauki za pomocą testów oraz quizów generowanych przez sztuczną inteligencję (np. ChatGPT, Gemini, Claude) lub tworzonych na bazie własnych materiałów.
 
 Dzięki zoptymalizowanemu i estetycznemu UI, pozwala w wygodny sposób rozwiązywać i sprawdzać quizy, a także śledzić i archiwizować swoje postępy.
 
@@ -9,15 +9,18 @@ Dzięki zoptymalizowanemu i estetycznemu UI, pozwala w wygodny sposób rozwiązy
 - **Pełna Wieloplatformowość** – natywny kod MAUI. Aplikacja z miejsca gotowa do działania na PC z Windowsem oraz na urządzeniach mobilnych.
 - **Szybki Import Danych** – zamiast mozolnie ręcznie wpisywać dane, po prostu wygeneruj kod JSON w ulubionym modelu językowym AI i od razu wklej go do edytora lub załaduj z zapisanego pliku.
 - **Inteligentne Rozpoznawanie Pytań** – aplikacja sama decyduje (na podstawie JSON-a), czy dane pytanie jest pytaniem jednokrotnego (Radio buttons) czy wielokrotnego (Checkboxes) wyboru.
-- **System Zarządzania Quizami** – trwały zapis wgranych quizów z możliwością ich archiwizacji lub całkowitego usunięcia z pamięci lokalnej dysku.
-- **Natychmiastowy Feedback i Wyjaśnienia** – od razu po odpowiedzeniu na dane pytanie, otrzymujesz czytelne podświetlenie graficzne (zieleń/czerwień) oraz, jeśli przygotowałeś je w prompcie, dedykowane wyjaśnienie logiki AI pod odpowiedzią.
+- **System Zarządzania Quizami** – trwały zapis wgranych quizów z możliwością ich archiwizacji. Aktywne i zarchiwizowane quizy są podzielone na dwie oddzielne listy, z czego lista archiwum jest domyślnie zwinięta dla zachowania czystego widoku.
+- **Natychmiastowy Feedback i Wyjaśnienia** – od razu po odpowiedzeniu na dane pytanie, otrzymujesz czytelne podświetlenie graficzne (zieleń/czerwień) oraz, jeśli opcjonalnie przygotowałeś je w prompcie, dedykowane wyjaśnienie ukazywane pod przyciskiem odpowiedzi.
 
 ## 📝 Format JSON - Jak prosić AI o testy?
 
-Aplikacja jest przystosowana do wczytywania konkretnej struktury danych w formacie `.json`. Aby poprawnie przygotować quiz w ChatGPT lub innym modelu, wklej poniższy _Prompt_:
+Aplikacja jest przystosowana do wczytywania konkretnej struktury danych w formacie `.json`. Wewnątrz aplikacji (w menu głównym) znajduje się przycisk pozwalający na szybkie skopiowanie gotowego polecenia do schowka:
 
-> Wygeneruj dla mnie quiz na temat **[TUTAJ WPISZ TEMAT]**. Będzie on używany w zewnętrznej aplikacji, więc Twoja odpowiedź MUSI składać się WYŁĄCZNIE z pliku JSON zgodnego z poniższym formatem, bez żadnego formatowania markdown (bez ```json). 
-> Zadbaj o to, by niektóre pytania miały jedną poprawną odpowiedź, a inne - kilka. Używaj pola `explanation` do krótkiego uzasadnienia poprawnej odpowiedzi.
+> Pamiętaj, aby Twoja odpowiedź składała się WYŁĄCZNIE z kodu w pliku w formacie JSON zgodnego z poniższym formatem (bez bloków markdown np. ```json).
+> Każde pytanie ma dowolną ilość odpowiedzi, dowolną ilość poprawnych odpowiedzi, oraz może, ale nie musi zawierać wyjaśnienia (explanation).
+> Jeśli quiz generowany jest z pytań podanych przez użytkownika z pliku, masz NIE modyfikować pytań ani odpowiedzi, a pytania, które nie są a,b,c,d po prostu pominąć.
+> Jeśli wśród pytań są takie, które nie mają zaznaczonej poprawnej odpowiedzi, pomiń je.
+> Na koniec wypisz użytkownikowi pytania, które pominąłeś.
 > 
 > WZÓR:
 > {
@@ -29,13 +32,12 @@ Aplikacja jest przystosowana do wczytywania konkretnej struktury danych w formac
 >         { "text": "Opcja 1", "isCorrect": false },
 >         { "text": "Opcja 2", "isCorrect": true }
 >       ],
->       "explanation": "To jedyna dobra odpowiedź, ponieważ..."
+>       "explanation": "Krótkie wyjaśnienie poprawnej odpowiedzi."
 >     }
 >   ]
 > }
 
 ## 🚀 Jak uruchomić projekt na Windows?
-
 ### Wymagania
 * Środowisko **.NET 9.0 SDK** z zainstalowanym workloadem `maui` (`dotnet workload install maui`).
 
