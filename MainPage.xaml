@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:QuizApp"
+             x:Class="QuizApp.MainPage"
+             Title="AI Quiz Loader">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:ArchiveTextConverter x:Key="ArchiveTextConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid ColumnDefinitions="*, *" ColumnSpacing="20" Padding="20">
+        <!-- Lewa Kolumna: Lista Quizów -->
+        <VerticalStackLayout Grid.Column="0" Spacing="15">
+            <Label Text="Twoje Quizy" Style="{StaticResource Headline}" SemanticProperties.HeadingLevel="Level1" />
+            
+            <CollectionView x:Name="QuizzesCollectionView" SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border StrokeShape="RoundRectangle 10" Stroke="LightGray" StrokeThickness="1" Margin="0, 5" Padding="15">
+                            <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto">
+                                <Label Text="{Binding Title}" Grid.Column="0" Grid.Row="0" FontAttributes="Bold" FontSize="18" VerticalOptions="Center"/>
+                                <Label Text="{Binding IsArchived, StringFormat='Zarchiwizowany: {0}'}" Grid.Column="0" Grid.Row="1" FontSize="12" TextColor="Gray" />
+                                
+                                <HorizontalStackLayout Grid.Column="1" Grid.RowSpan="2" Spacing="10" VerticalOptions="Center">
+                                    <Button Text="Start" Clicked="OnRunQuizClicked" CommandParameter="{Binding .}" />
+                                    <Button Text="{Binding IsArchived, Converter={StaticResource ArchiveTextConverter}}" 
+                                            Clicked="OnArchiveToggleClicked" CommandParameter="{Binding .}" 
+                                            StyleClass="ButtonOutline" />
+                                    <Button Text="Usuń" Clicked="OnDeleteQuizClicked" CommandParameter="{Binding .}" BackgroundColor="DarkRed" />
+                                </HorizontalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+
+        <!-- Prawa Kolumna: Import -->
+        <ScrollView Grid.Column="1">
+            <VerticalStackLayout Padding="10" Spacing="20" MaximumWidthRequest="500" HorizontalOptions="Center">
+                
+                <Label Text="Ucz się z AI!" 
+                       Style="{StaticResource Headline}" 
+                       HorizontalOptions="Center" 
+                       SemanticProperties.HeadingLevel="Level1" />
+                       
+                <Label Text="Wklej wygenerowany quiz (JSON) w pole poniżej, lub wczytaj z pliku." 
+                       Style="{StaticResource SubHeadline}"
+                       HorizontalOptions="Center" 
+                       HorizontalTextAlignment="Center"/>
+
+                <Editor x:Name="JsonEditor"
+                        Placeholder="Tutaj wklej JSON z quizem..."
+                        HeightRequest="200"
+                        AutoSize="TextChanges" />
+
+                <Label x:Name="ErrorLabel" 
+                       TextColor="Red" 
+                       IsVisible="False" 
+                       HorizontalOptions="Center" 
+                       HorizontalTextAlignment="Center" />
+
+                <Button Text="Dodaj z wklejonego tekstu"
+                        Clicked="OnStartPastedClicked"
+                        HorizontalOptions="Fill" />
+
+                <Label Text="LUB" HorizontalOptions="Center" TextColor="Gray" />
+
+                <Button Text="Wczytaj z pliku (.json)"
+                        Clicked="OnLoadFileClicked"
+                        HorizontalOptions="Fill"
+                        StyleClass="ButtonOutline" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</ContentPage>
