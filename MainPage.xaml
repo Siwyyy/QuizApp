@@ -11,9 +11,18 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <Grid ColumnDefinitions="*, *" ColumnSpacing="20" Padding="20">
+    <Grid ColumnSpacing="20" RowSpacing="20" Padding="{OnIdiom Phone='10', Default='20'}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="{OnIdiom Phone=0, Default=*}" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="{OnIdiom Phone=Auto, Default=*}" />
+            <RowDefinition Height="{OnIdiom Phone=*, Default=0}" />
+        </Grid.RowDefinitions>
+
         <!-- Lewa Kolumna: Lista Quizów -->
-        <VerticalStackLayout Grid.Column="0" Spacing="15">
+        <VerticalStackLayout Grid.Column="0" Grid.Row="0" Spacing="15">
             <Label Text="Twoje Quizy" Style="{StaticResource Headline}" SemanticProperties.HeadingLevel="Level1" />
             
             <CollectionView x:Name="QuizzesCollectionView" SelectionMode="None">
@@ -39,8 +48,8 @@
         </VerticalStackLayout>
 
         <!-- Prawa Kolumna: Import -->
-        <ScrollView Grid.Column="1">
-            <VerticalStackLayout Padding="10" Spacing="20" MaximumWidthRequest="500" HorizontalOptions="Center">
+        <ScrollView Grid.Column="{OnIdiom Phone=0, Default=1}" Grid.Row="{OnIdiom Phone=1, Default=0}">
+            <VerticalStackLayout Padding="10" Spacing="20" MaximumWidthRequest="480" HorizontalOptions="Center">
                 
                 <Label Text="Ucz się z AI!" 
                        Style="{StaticResource Headline}" 
@@ -51,6 +60,13 @@
                        Style="{StaticResource SubHeadline}"
                        HorizontalOptions="Center" 
                        HorizontalTextAlignment="Center"/>
+
+                <Button Text="Skopiuj prompt z wzorem quizu dla AI do schowka"
+                        Clicked="OnCopyPromptClicked"
+                        HorizontalOptions="Fill"
+                        CornerRadius="20"
+                        HeightRequest="40"
+                        Margin="0, -10, 0, 10" />
 
                 <Editor x:Name="JsonEditor"
                         Placeholder="Tutaj wklej JSON z quizem..."
@@ -76,6 +92,21 @@
 
             </VerticalStackLayout>
         </ScrollView>
+
+        <!-- Toast Notification Overlay -->
+        <Border x:Name="ToastNotification"
+                Grid.ColumnSpan="2"
+                BackgroundColor="#333333"
+                StrokeShape="RoundRectangle 10"
+                Padding="15,10"
+                HorizontalOptions="Center"
+                VerticalOptions="End"
+                Margin="0, 0, 0, 50"
+                Opacity="0"
+                InputTransparent="True">
+            <Label x:Name="ToastLabel" Text="Powiadomienie"
+                   TextColor="White" />
+        </Border>
     </Grid>
 
 </ContentPage>

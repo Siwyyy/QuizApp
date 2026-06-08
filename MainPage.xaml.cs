@@ -36,6 +36,36 @@ public partial class MainPage : ContentPage
         QuizzesCollectionView.ItemsSource = sorted;
     }
 
+    private async void OnCopyPromptClicked(object sender, EventArgs e)
+    {
+        string prompt = @"Pamiętaj, aby Twoja odpowiedź składała się WYŁĄCZNIE z kodu JSON zgodnego z poniższym formatem (bez bloków markdown np. ```json).
+
+WZÓR:
+{
+  ""title"": ""Nazwa Quizu"",
+  ""questions"": [
+    {
+      ""text"": ""Treść pytania"",
+      ""options"": [
+        { ""text"": ""Opcja 1"", ""isCorrect"": false },
+        { ""text"": ""Opcja 2"", ""isCorrect"": true }
+      ],
+      ""explanation"": ""Krótkie wyjaśnienie poprawnej odpowiedzi.""
+    }
+  ]
+}";
+        await Clipboard.Default.SetTextAsync(prompt);
+        ShowToast("Prompt ze wzorem formatowania został skopiowany do schowka.");
+    }
+
+    private async void ShowToast(string message)
+    {
+        ToastLabel.Text = message;
+        ToastNotification.Opacity = 1;
+        await Task.Delay(2500);
+        await ToastNotification.FadeTo(0, 500);
+    }
+
     private async void OnStartPastedClicked(object? sender, EventArgs e)
     {
         ErrorLabel.IsVisible = false;
@@ -97,7 +127,7 @@ public partial class MainPage : ContentPage
             await QuizManager.AddQuizAsync(quiz);
             await RefreshQuizList();
             
-            await DisplayAlert("Sukces", "Quiz został pomyślnie dodany do Twojej listy!", "OK");
+            ShowToast("Quiz został pomyślnie dodany do Twojej listy!");
         }
         catch (JsonException ex)
         {

@@ -67,8 +67,18 @@ public partial class QuizPage : ContentPage
             }
             else
             {
-                var rb = new RadioButton { Content = option.Text, GroupName = "OptionsGroup", IsChecked = option.IsSelected, Padding = new Thickness(10) };
+                var rb = new RadioButton 
+                { 
+                    Content = option.Text,
+                    GroupName = "OptionsGroup", 
+                    IsChecked = option.IsSelected,
+                    VerticalOptions = LayoutOptions.Center,
+                    Margin = new Thickness(10, 10, 0, 0) // Dodajemy margines z lewej i z góry, aby zrównać z rozmiarem CheckBoxa
+                };
                 rb.CheckedChanged += (s, e) => option.IsSelected = e.Value;
+                
+                var tapGesture = new TapGestureRecognizer();
+                tapGesture.Tapped += (s, e) => rb.IsChecked = true;
                 
                 optionView = new Border 
                 { 
@@ -77,8 +87,10 @@ public partial class QuizPage : ContentPage
                     StrokeThickness = 1,
                     BackgroundColor = Colors.Transparent,
                     Content = rb,
-                    Margin = new Thickness(0, 5)
+                    Margin = new Thickness(0, 5),
+                    Padding = new Thickness(10, 5) 
                 };
+                optionView.GestureRecognizers.Add(tapGesture);
             }
 
             OptionsContainer.Children.Add(optionView);
@@ -135,6 +147,7 @@ public partial class QuizPage : ContentPage
             if (view.Content is HorizontalStackLayout hsl)
             {
                 if (hsl.Children[0] is CheckBox cb) cb.IsEnabled = false;
+                
                 if (hsl.Children[1] is Label lbl) 
                 {
                     if (bgColor != Colors.Transparent) lbl.TextColor = textColor;
