@@ -3,59 +3,47 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:QuizApp"
              x:Class="QuizApp.MainPage"
-             Title="AI Quiz Loader">
+             Title="QuizApp">
 
     <ContentPage.Resources>
         <ResourceDictionary>
             <local:ArchiveTextConverter x:Key="ArchiveTextConverter" />
+            
+            <DataTemplate x:Key="QuizItemTemplate">
+                <Border StrokeShape="RoundRectangle 10" Stroke="LightGray" StrokeThickness="1" Margin="0, 5" Padding="15">
+                    <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto">
+                        <Label Text="{Binding Title}" Grid.Column="0" Grid.Row="0" FontAttributes="Bold" FontSize="18" VerticalOptions="Center"/>
+                        <Label Text="{Binding IsArchived, StringFormat='Zarchiwizowany: {0}'}" Grid.Column="0" Grid.Row="1" FontSize="12" TextColor="Gray" />
+                        
+                        <HorizontalStackLayout Grid.Column="1" Grid.RowSpan="2" Spacing="10" VerticalOptions="Center">
+                            <Button Text="Start" Clicked="OnRunQuizClicked" CommandParameter="{Binding .}" />
+                            <Button Text="{Binding IsArchived, Converter={StaticResource ArchiveTextConverter}}" 
+                                    Clicked="OnArchiveToggleClicked" CommandParameter="{Binding .}" 
+                                    StyleClass="ButtonOutline" />
+                            <Button Text="Usuń" Clicked="OnDeleteQuizClicked" CommandParameter="{Binding .}" BackgroundColor="DarkRed" />
+                        </HorizontalStackLayout>
+                    </Grid>
+                </Border>
+            </DataTemplate>
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <Grid ColumnSpacing="20" RowSpacing="20" Padding="{OnIdiom Phone='10', Default='20'}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="{OnIdiom Phone=0, Default=*}" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="{OnIdiom Phone=Auto, Default=*}" />
-            <RowDefinition Height="{OnIdiom Phone=*, Default=0}" />
-        </Grid.RowDefinitions>
-
+    <Grid x:Name="MainLayoutGrid" ColumnSpacing="20" RowSpacing="20" Padding="20">
         <!-- Lewa Kolumna: Lista Quizów -->
-        <VerticalStackLayout Grid.Column="0" Grid.Row="0" Spacing="15">
+        <VerticalStackLayout x:Name="LeftColumnPanel" Spacing="15">
             <Label Text="Twoje Quizy" Style="{StaticResource Headline}" SemanticProperties.HeadingLevel="Level1" />
             
-            <CollectionView x:Name="QuizzesCollectionView" SelectionMode="None">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Border StrokeShape="RoundRectangle 10" Stroke="LightGray" StrokeThickness="1" Margin="0, 5" Padding="15">
-                            <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto">
-                                <Label Text="{Binding Title}" Grid.Column="0" Grid.Row="0" FontAttributes="Bold" FontSize="18" VerticalOptions="Center"/>
-                                <Label Text="{Binding IsArchived, StringFormat='Zarchiwizowany: {0}'}" Grid.Column="0" Grid.Row="1" FontSize="12" TextColor="Gray" />
-                                
-                                <HorizontalStackLayout Grid.Column="1" Grid.RowSpan="2" Spacing="10" VerticalOptions="Center">
-                                    <Button Text="Start" Clicked="OnRunQuizClicked" CommandParameter="{Binding .}" />
-                                    <Button Text="{Binding IsArchived, Converter={StaticResource ArchiveTextConverter}}" 
-                                            Clicked="OnArchiveToggleClicked" CommandParameter="{Binding .}" 
-                                            StyleClass="ButtonOutline" />
-                                    <Button Text="Usuń" Clicked="OnDeleteQuizClicked" CommandParameter="{Binding .}" BackgroundColor="DarkRed" />
-                                </HorizontalStackLayout>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+            <CollectionView x:Name="QuizzesCollectionView" SelectionMode="None" ItemTemplate="{StaticResource QuizItemTemplate}" />
+            
+            <Button x:Name="ToggleArchivedBtn" Text="Pokaż zarchiwizowane quizy" Clicked="OnToggleArchivedClicked" IsVisible="False" BackgroundColor="Transparent" TextColor="Gray" Margin="0, 10, 0, 0" />
+            
+            <CollectionView x:Name="ArchivedQuizzesCollectionView" SelectionMode="None" IsVisible="False" ItemTemplate="{StaticResource QuizItemTemplate}" />
         </VerticalStackLayout>
 
         <!-- Prawa Kolumna: Import -->
-        <ScrollView Grid.Column="{OnIdiom Phone=0, Default=1}" Grid.Row="{OnIdiom Phone=1, Default=0}">
+        <ScrollView x:Name="RightColumnPanel">
             <VerticalStackLayout Padding="10" Spacing="20" MaximumWidthRequest="480" HorizontalOptions="Center">
                 
-                <Label Text="Ucz się z AI!" 
-                       Style="{StaticResource Headline}" 
-                       HorizontalOptions="Center" 
-                       SemanticProperties.HeadingLevel="Level1" />
-                       
                 <Label Text="Wklej wygenerowany quiz (JSON) w pole poniżej, lub wczytaj z pliku." 
                        Style="{StaticResource SubHeadline}"
                        HorizontalOptions="Center" 
@@ -95,7 +83,6 @@
 
         <!-- Toast Notification Overlay -->
         <Border x:Name="ToastNotification"
-                Grid.ColumnSpan="2"
                 BackgroundColor="#333333"
                 StrokeShape="RoundRectangle 10"
                 Padding="15,10"

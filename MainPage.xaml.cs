@@ -23,6 +23,48 @@ public partial class MainPage : ContentPage
         InitializeComponent();
     }
 
+    protected override void OnSizeAllocated(double width, double height)
+    {
+        base.OnSizeAllocated(width, height);
+
+        if (width > 0 && width < 900)
+        {
+            // Tryb pionowy (wąskie okno lub telefon)
+            MainLayoutGrid.ColumnDefinitions.Clear();
+            MainLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+
+            MainLayoutGrid.RowDefinitions.Clear();
+            MainLayoutGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            MainLayoutGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
+
+            Grid.SetColumn(LeftColumnPanel, 0);
+            Grid.SetRow(LeftColumnPanel, 0);
+
+            Grid.SetColumn(RightColumnPanel, 0);
+            Grid.SetRow(RightColumnPanel, 1);
+
+            Grid.SetColumnSpan(ToastNotification, 1);
+        }
+        else if (width >= 900)
+        {
+            // Tryb poziomy (szerokie okno)
+            MainLayoutGrid.ColumnDefinitions.Clear();
+            MainLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+            MainLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+
+            MainLayoutGrid.RowDefinitions.Clear();
+            MainLayoutGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
+
+            Grid.SetColumn(LeftColumnPanel, 0);
+            Grid.SetRow(LeftColumnPanel, 0);
+
+            Grid.SetColumn(RightColumnPanel, 1);
+            Grid.SetRow(RightColumnPanel, 0);
+
+            Grid.SetColumnSpan(ToastNotification, 2);
+        }
+    }
+
     protected override async void OnAppearing()
     {
         base.OnAppearing();
@@ -32,13 +74,46 @@ public partial class MainPage : ContentPage
     private async Task RefreshQuizList()
     {
         var quizzes = await QuizManager.LoadQuizzesAsync();
-        var sorted = quizzes.OrderBy(q => q.IsArchived).ThenBy(q => q.Title).ToList();
-        QuizzesCollectionView.ItemsSource = sorted;
+        
+        var activeQuizzes = quizzes.Where(q => !q.IsArchived).OrderBy(q => q.Title).ToList();
+        var archivedQuizzes = quizzes.Where(q => q.IsArchived).OrderBy(q => q.Title).ToList();
+        
+        QuizzesCollectionView.ItemsSource = activeQuizzes;
+        ArchivedQuizzesCollectionView.ItemsSource = archivedQuizzes;
+        
+        if (archivedQuizzes.Any())
+        {
+            ToggleArchivedBtn.IsVisible = true;
+            ToggleArchivedBtn.Text = ArchivedQuizzesCollectionView.IsVisible 
+                ? $"Ukryj zarchiwizowane quizy ({archivedQuizzes.Count})" 
+                : $"Pokaż zarchiwizowane quizy ({archivedQuizzes.Count})";
+        }
+        else
+        {
+            ToggleArchivedBtn.IsVisible = false;
+            ArchivedQuizzesCollectionView.IsVisible = false;
+        }
+    }
+
+    private void OnToggleArchivedClicked(object sender, EventArgs e)
+    {
+        ArchivedQuizzesCollectionView.IsVisible = !ArchivedQuizzesCollectionView.IsVisible;
+        
+        var archivedQuizzes = ArchivedQuizzesCollectionView.ItemsSource as List<Quiz>;
+        int count = archivedQuizzes?.Count ?? 0;
+        
+        ToggleArchivedBtn.Text = ArchivedQuizzesCollectionView.IsVisible 
+            ? $"Ukryj zarchiwizowane quizy ({count})" 
+            : $"Pokaż zarchiwizowane quizy ({count})";
     }
 
     private async void OnCopyPromptClicked(object sender, EventArgs e)
     {
-        string prompt = @"Pamiętaj, aby Twoja odpowiedź składała się WYŁĄCZNIE z kodu JSON zgodnego z poniższym formatem (bez bloków markdown np. ```json).
+        string prompt = @"Pamiętaj, aby Twoja odpowiedź składała się WYŁĄCZNIE z kodu w pliku w formacie JSON zgodnego z poniższym formatem (bez bloków markdown np. ```json).
+Każde pytanie ma dowolną ilość odpowiedzi, dowolną ilość poprawnych odpowiedzi, oraz może, ale nie musi zawierać wyjaśnienia (explanation).
+Jeśli quiz generowany jest z pytań podanych przez użytkownika z pliku, masz NIE modyfikować pytań ani odpowiedzi, a pytania, które nie są a,b,c,d po prostu pominąć.
+Jeśli wśród pytań są takie, które nie mają zaznaczonej poprawnej odpowiedzi, pomiń je.
+Na koniec wypisz użytkownikowi pytania, które pominąłeś.
 
 WZÓR:
 {

@@ -30,16 +30,16 @@
                 <!-- Kontener dla dynamicznych opcji -->
                 <VerticalStackLayout x:Name="OptionsContainer" Spacing="10" Margin="0, 10" />
 
+                <Button x:Name="ActionBtn" 
+                        Text="Sprawdź" 
+                        Clicked="OnActionClicked" 
+                        HorizontalOptions="Fill" />
+
                 <Label x:Name="ExplanationLabel" 
                        IsVisible="False" 
                        FontSize="16" 
                        TextColor="DarkCyan"
                        Margin="0, 10" />
-
-                <Button x:Name="ActionBtn" 
-                        Text="Sprawdź" 
-                        Clicked="OnActionClicked" 
-                        HorizontalOptions="Fill" />
 
             </VerticalStackLayout>
         </Grid>
