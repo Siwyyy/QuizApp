@@ -5,22 +5,30 @@
              Title="Podsumowanie"
              NavigationPage.HasBackButton="False">
 
-    <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center" HorizontalOptions="Center">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="{OnIdiom Phone=0, Default=*}" />
+            <ColumnDefinition Width="{OnIdiom Phone=*, Default=600}" />
+            <ColumnDefinition Width="{OnIdiom Phone=0, Default=*}" />
+        </Grid.ColumnDefinitions>
         
-        <Label Text="Koniec Quizu!" 
-               FontSize="28" 
-               FontAttributes="Bold" 
-               HorizontalOptions="Center" />
+        <VerticalStackLayout Grid.Column="1" Padding="30" Spacing="20" VerticalOptions="Center" HorizontalOptions="Fill">
+            
+            <Label Text="Koniec Quizu!" 
+                   FontSize="28" 
+                   FontAttributes="Bold" 
+                   HorizontalOptions="Center" />
 
-        <Label x:Name="ScoreLabel" 
-               Text="Zdobyte punkty: 0/0" 
-               FontSize="20" 
-               HorizontalOptions="Center" />
+            <Label x:Name="ScoreLabel" 
+                   Text="Zdobyte punkty: 0/0" 
+                   FontSize="20" 
+                   HorizontalOptions="Center" />
 
-        <Button Text="Wróć do menu głównego" 
-                Clicked="OnBackToMenuClicked" 
-                Margin="0, 30, 0, 0" />
+            <Button Text="Wróć do menu głównego" 
+                    Clicked="OnBackToMenuClicked" 
+                    Margin="0, 30, 0, 0" />
 
-    </VerticalStackLayout>
+        </VerticalStackLayout>
+    </Grid>
 
 </ContentPage>

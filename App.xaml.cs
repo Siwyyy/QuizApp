@@ -1,4 +1,4 @@
-﻿namespace QuizApp;
+namespace QuizApp;
 
 public partial class App : Application
 {
@@ -9,6 +9,13 @@ public partial class App : Application
 
 	protected override Window CreateWindow(IActivationState? activationState)
 	{
-		return new Window(new AppShell());
+		var window = new Window(new AppShell());
+		
+		// Ustawienie minimalnych wymiarów okna (głównie dla Windows/Mac)
+		// Zapobiega ściśnięciu okna poniżej 650px, chroniąc nasz 600-pikselowy Grid przed ucięciem
+		window.MinimumWidth = 650;
+		window.MinimumHeight = 500;
+		
+		return window;
 	}
 }
